@@ -1,0 +1,50 @@
+"""Bu uygulamada amaç çoklu programlama ile çoklu işlemci çalışmayı çıktılarını izleyerek
+farkını anlamak. Threading ve os kütüphanelerindeki os.getpid() ile threading.get_ident() fonksiyonu
+sayesinde aldığımız ID'ler yardımcı olacaktır."""
+
+
+from multiprocessing import Process
+import threading
+import time
+import os
+
+def kup_hesapla(sayi):
+    print(f"Hesaplaniyor (Process/Thread ID: {os.getpid()} / {threading.get_ident()}): {sayi} -> {sayi*sayi*sayi}")
+    time.sleep(1)
+    
+    
+def coklu_programlama():
+    sayilar = [6,7,8,9,10]
+    print("Coklu programlama basladi (Thread)...\n")
+    threads = []
+        
+    for sayi in sayilar:
+        t = threading.Thread(target=kup_hesapla,args=(sayi,))
+        threads.append(t)
+        t.start()
+        
+    for t in threads:
+        t.join()
+        
+    print("\n Coklu programlama tamamlandi!")
+    
+
+def coklu_islemci():
+    sayilar = [6,7,8,9,10]
+    print("Coklu islemci basladi (Process)...\n")
+    processes = []
+    for sayi in sayilar:
+        p = Process(target= kup_hesapla, args=(sayi,))
+        processes.append(p)
+        p.start()
+        
+        
+    for p in processes:
+        p.join()
+    
+    print("\n Coklu islemci tamamlandi!")
+    
+    
+if __name__ == "__main__":
+    coklu_programlama()
+    coklu_islemci()
