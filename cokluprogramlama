@@ -1,0 +1,40 @@
+"""Bu uygulamada amaç İşletim Sisteminin aynı işlemci veya işlemci çekirdeğini kullanarak 
+zaman paylaşımı ile yapılan işlemi simüle eder, 
+çalıştırıldığı zaman üç programın çıktıları ve Thread ID'ler sıra sıra gözükecektir.'
+"""
+import time
+
+def program1():
+    for i in range(5):
+        print(f"Program 1 calisiyor : {i}, Thread ID : {threading.get_ident()}")
+        time.sleep(2) #daha rahat görebilmek için
+        
+def program2():
+    for i in range(5):
+        print(f"Program 2 calisiyor: {i},  Thread ID : {threading.get_ident()}")
+        time.sleep(2)
+        
+
+def program3():
+    for i in range(5):
+        print(f"Program 3 calisiyor: {i},  Thread ID : {threading.get_ident()}")
+        time.sleep(2)
+        
+
+if __name__ == "__main__": #import edildiğinde istem dışı çalışmayı önler
+    import threading
+    
+    
+    thread1 = threading.Thread(target = program1)
+    thread2 = threading.Thread(target = program2)
+    thread3 = threading.Thread(target = program3)
+    
+    thread1.start()
+    thread2.start()
+    thread3.start()
+    
+    thread1.join()
+    thread2.join()
+    thread3.join()
+    
+    print("Tüm Programlar tamamlandi!")
