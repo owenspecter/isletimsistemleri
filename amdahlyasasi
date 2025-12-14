@@ -1,13 +1,72 @@
-def hizlanma_hesapla(seri,core):
-    amdahl = 1 / (seri +(1-seri)/core)    
-    return amdahl
+import matplotlib.pyplot as plt
+import numpy as np
 
+def amdahl_speedup(p, n):
+    """
+    
+    Parametreler:
+    p (float): Paralelleştirilebilir kısım (0.0 - 1.0 arası)
+    n (int): İşlemci sayısı
+    
+    Dönüş:
+    float: Hızlanma (Speedup) katsayısı
+    """
+    if not (0 <= p <= 1):
+        raise ValueError("Paralel kısım (P) 0 ile 1 arasında olmalıdır.")
+    
+    return 1 / ((1 - p) + (p / n))
 
+def visualize_amdahl():
+    """
+    Farklı paralel oranları (P) için işlemci sayısına göre
+    hızlanma grafikleri
+    """
+    # İşlemci sayıları 
+    processors = np.linspace(1, 100, 100) 
+    
+    # Farklı paralelleştirme oranları 
+    p_values = [0.50, 0.75, 0.90, 0.95, 0.99]
+    
+    plt.figure(figsize=(10, 6))
+    
+    for p in p_values:
+        # Her bir P değeri için hızlanma dizisi oluştur
+        speedups = [amdahl_speedup(p, n) for n in processors]
+        plt.plot(processors, speedups, label=f'P = {p:.2f} (%{int(p*100)})')
 
-seri = (float(input("Sistemin yuzde kacinin seri oldugu giriniz\n")) /100) 
- 
-cekirdek = int(input("Kaç çekirdek kullanilarak calistirilacagini giriniz\n"))
+    # Grafik Ayarları
+    plt.title("Amdahl Yasası: İşlemci Sayısı vs. Hızlanma", fontsize=14)
+    plt.xlabel("İşlemci Sayısı (N)", fontsize=12)
+    plt.ylabel("Hızlanma (Speedup)", fontsize=12)
+    plt.grid(True, which="both", ls="-", alpha=0.5)
+    plt.legend(title="Paralel Kısım (P)")
+    plt.axhline(y=1, color='k', linestyle='--', linewidth=0.8) # Referans çizgisi
+    
+    # Teorik limitler
+    plt.text(80, 18, "Teorik Limit (P=0.95) -> 20x", fontsize=9, color='red')
 
-deger = hizlanma_hesapla(seri,cekirdek)
+    plt.show()
 
-print(f"{deger} kadar hizlanir.")
+def main():
+    print("Amdahl Yasası Hesaplayıcı ")
+    
+    # Kullanıcıdan input almak
+    try:
+        user_p = float(input("Paralelleştirilebilir oranı girin (Örn: 0.95): "))
+        user_n = int(input("İşlemci sayısını girin (Örn: 8): "))
+        
+        result = amdahl_speedup(user_p, user_n)
+        
+        print(f"\nSONUÇ:")
+        print(f"Programın %{user_p*100}'i paralel ve {user_n} işlemci kullanılıyor.")
+        print(f"Tahmini Hızlanma (Speedup): {result:.4f}x")
+        
+        # Maksimum teorik hızlanma kısmı 
+        max_speedup = 1 / (1 - user_p)
+        print(f"Bu oranla ulaşılabilecek maksimum teorik hızlanma: {max_speedup:.2f}x")
+        
+    except ValueError as e:
+        print(f"Hata: {e}")
+
+    print("\nGrafik oluşturuluyor...")
+    visualize_amdahl()
