@@ -1,0 +1,28 @@
+"""Bu uygulamada amaç her processin farklı bir işlemci üzerinde os.getpid() 
+fonksiyonuyla aynı anda tamamlandığını ve paralel çalıştığını gözlemlemek."""
+
+from multiprocessing import Process
+import os 
+import time
+
+#Paralel calisan islem
+def islem_yap(sayi):
+    print(f"Islemci : {os.getpid()} - Sayi : {sayi}, Karekoku : {sayi ** 1/2}")
+    time.sleep(1)
+    
+    
+if __name__ == "__main__": ##import edildiğinde istem dışı çalışmayı önler
+    print("Çoklu İşlemci Başlıyor...\n")
+    
+    sayilar = [144,121,100,81,64,49,36,25,16,9,4]
+    islemler = []
+    
+    for sayi in sayilar :
+        islem = Process(target=islem_yap,args=(sayi,))
+        islemler.append(islem)
+        islem.start()
+        
+        for islem in islemler:
+            islem.join()
+            
+    print("Tum islemler tamamlandi!")
