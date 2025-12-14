@@ -1,0 +1,13 @@
+def hizlanma_hesapla(seri,core):
+    amdahl = 1 / (seri +(1-seri)/core)    
+    return amdahl
+
+
+
+seri = (float(input("Sistemin yuzde kacinin seri oldugu giriniz\n")) /100) 
+ 
+cekirdek = int(input("Kaç çekirdek kullanilarak calistirilacagini giriniz\n"))
+
+deger = hizlanma_hesapla(seri,cekirdek)
+
+print(f"{deger} kadar hizlanir.")
